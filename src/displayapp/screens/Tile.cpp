@@ -3,6 +3,8 @@
 #include "components/ble/BleController.h"
 #include "displayapp/InfiniTimeTheme.h"
 
+LV_IMG_DECLARE(strength_icon)
+
 using namespace Pinetime::Applications::Screens;
 
 namespace {
@@ -54,7 +56,7 @@ Tile::Tile(uint8_t screenID,
     if (i == 3) {
       btnmMap[btIndex++] = "\n";
     }
-    if (applications[i].application == Apps::None) {
+    if (applications[i].application == Apps::None || applications[i].application == Apps::Strength) {
       btnmMap[btIndex] = " ";
     } else {
       btnmMap[btIndex] = applications[i].icon;
@@ -81,6 +83,22 @@ Tile::Tile(uint8_t screenID,
     if (applications[i].application == Apps::None || !applications[i].enabled) {
       lv_btnmatrix_set_btn_ctrl(btnm1, i, LV_BTNMATRIX_CTRL_DISABLED);
     }
+  }
+
+  auto* matrixData = static_cast<lv_btnmatrix_ext_t*>(lv_obj_get_ext_attr(btnm1));
+  for (uint8_t i = 0; i < 6; i++) {
+    if (apps[i] != Apps::Strength) {
+      continue;
+    }
+    const lv_area_t& button = matrixData->button_areas[i];
+    lv_obj_t* icon = lv_img_create(lv_scr_act(), nullptr);
+    lv_img_set_src(icon, &strength_icon);
+    lv_obj_align(icon,
+                 btnm1,
+                 LV_ALIGN_IN_TOP_LEFT,
+                 (button.x1 + button.x2 - 48) / 2,
+                 (button.y1 + button.y2 - 48) / 2);
+    lv_obj_set_click(icon, false);
   }
 
   btnm1->user_data = this;

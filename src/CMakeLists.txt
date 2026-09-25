@@ -391,6 +391,7 @@ list(APPEND SOURCE_FILES
         displayapp/screens/CheckboxList.cpp
         displayapp/screens/BatteryInfo.cpp
         displayapp/screens/Steps.cpp
+        displayapp/screens/Strength.cpp
         displayapp/screens/Timer.cpp
         displayapp/screens/Dice.cpp
         displayapp/screens/PassKey.cpp

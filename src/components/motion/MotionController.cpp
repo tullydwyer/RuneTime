@@ -56,6 +56,22 @@ void MotionController::Update(int16_t x, int16_t y, int16_t z, uint32_t nbSteps)
   lastTime = time;
   time = xTaskGetTickCount();
 
+  const uint8_t command = strengthCommand.exchange(0);
+  if (command == 1) {
+    strengthWorkout.Reset();
+    strengthCalibrating.store(true);
+    strengthWorkoutActive = true;
+  } else if (command == 2) {
+    strengthWorkoutActive = false;
+  }
+  if (strengthWorkoutActive) {
+    const uint32_t milliseconds = time / configTICK_RATE_HZ * 1000 + (time % configTICK_RATE_HZ) * 1000 / configTICK_RATE_HZ;
+    if (strengthWorkout.Update(x, y, z, milliseconds)) {
+      strengthReps.fetch_add(1);
+    }
+    strengthCalibrating.store(strengthWorkout.IsCalibrating());
+  }
+
   xHistory++;
   xHistory[0] = x;
   yHistory++;
@@ -78,6 +94,23 @@ void MotionController::Update(int16_t x, int16_t y, int16_t z, uint32_t nbSteps)
     currentTripSteps += deltaSteps;
   }
   SetSteps(Days::Today, nbSteps);
+}
+
+void MotionController::StartStrengthWorkout() {
+  strengthCalibrating.store(true);
+  strengthCommand.store(1);
+}
+
+void MotionController::StopStrengthWorkout() {
+  strengthCommand.store(2);
+}
+
+uint32_t MotionController::StrengthReps() const {
+  return strengthReps.load();
+}
+
+bool MotionController::StrengthIsCalibrating() const {
+  return strengthCalibrating.load();
 }
 
 MotionController::AccelStats MotionController::GetAccelStats() const {

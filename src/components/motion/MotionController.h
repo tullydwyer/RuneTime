@@ -1,11 +1,13 @@
 #pragma once
 
 #include <cstdint>
+#include <atomic>
 
 #include <FreeRTOS.h>
 
 #include "drivers/Bma421.h"
 #include "components/ble/MotionService.h"
+#include "components/motion/StrengthWorkout.h"
 #include "utility/CircularBuffer.h"
 
 namespace Pinetime {
@@ -28,6 +30,11 @@ namespace Pinetime {
       void AdvanceDay();
 
       void Update(int16_t x, int16_t y, int16_t z, uint32_t nbSteps);
+
+      void StartStrengthWorkout();
+      void StopStrengthWorkout();
+      uint32_t StrengthReps() const;
+      bool StrengthIsCalibrating() const;
 
       int16_t X() const {
         return xHistory[0];
@@ -112,6 +119,11 @@ namespace Pinetime {
 
       DeviceTypes deviceType = DeviceTypes::Unknown;
       Pinetime::Controllers::MotionService* service = nullptr;
+      StrengthWorkout strengthWorkout;
+      bool strengthWorkoutActive = false;
+      std::atomic<uint8_t> strengthCommand {0};
+      std::atomic<uint32_t> strengthReps {0};
+      std::atomic<bool> strengthCalibrating {true};
     };
   }
 }
