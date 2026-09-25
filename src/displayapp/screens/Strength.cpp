@@ -13,6 +13,7 @@ namespace {
   constexpr char temporaryPath[] = "/strength.tmp";
   constexpr uint32_t progressMagic = 0x52554e45;
   constexpr uint32_t progressVersion = 1;
+  const lv_point_t levelDivider[] = {{0, 66}, {68, 0}};
 
   struct ProgressRecord {
     uint32_t magic;
@@ -38,66 +39,81 @@ Strength::Strength(Controllers::MotionController& motionController, Controllers:
   lv_obj_set_click(background, false);
   lv_obj_set_style_local_radius(background, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
   lv_obj_set_style_local_border_width(background, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
-  lv_obj_set_style_local_bg_color(background, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(22, 17, 13));
+  lv_obj_set_style_local_bg_color(background, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(47, 45, 39));
 
-  lv_obj_t* title = lv_label_create(lv_scr_act(), nullptr);
-  lv_obj_set_style_local_text_color(title, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(232, 204, 143));
-  lv_label_set_text_static(title, "STRENGTH");
-  lv_obj_align(title, nullptr, LV_ALIGN_IN_TOP_MID, 0, 3);
+  lv_obj_t* panelShadow = lv_obj_create(lv_scr_act(), nullptr);
+  lv_obj_set_size(panelShadow, 228, 112);
+  lv_obj_align(panelShadow, nullptr, LV_ALIGN_IN_TOP_MID, 0, 3);
+  lv_obj_set_click(panelShadow, false);
+  lv_obj_set_style_local_radius(panelShadow, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 6);
+  lv_obj_set_style_local_border_width(panelShadow, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
+  lv_obj_set_style_local_bg_color(panelShadow, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(33, 32, 28));
 
-  lv_obj_t* panel = lv_obj_create(lv_scr_act(), nullptr);
-  lv_obj_set_size(panel, 224, 62);
-  lv_obj_align(panel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 27);
-  lv_obj_set_click(panel, false);
-  lv_obj_set_style_local_radius(panel, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
-  lv_obj_set_style_local_border_width(panel, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 2);
-  lv_obj_set_style_local_border_color(panel, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(135, 104, 57));
-  lv_obj_set_style_local_bg_color(panel, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(49, 37, 24));
+  statPanel = lv_obj_create(lv_scr_act(), nullptr);
+  lv_obj_set_size(statPanel, 222, 106);
+  lv_obj_align(statPanel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 6);
+  lv_obj_set_click(statPanel, false);
+  lv_obj_set_style_local_radius(statPanel, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 5);
+  lv_obj_set_style_local_border_width(statPanel, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 4);
+  lv_obj_set_style_local_border_color(statPanel, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(102, 99, 87));
+  lv_obj_set_style_local_bg_color(statPanel, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(80, 81, 77));
 
   lv_obj_t* icon = lv_img_create(lv_scr_act(), nullptr);
   lv_img_set_src(icon, &strength_icon);
-  lv_obj_align(icon, panel, LV_ALIGN_IN_LEFT_MID, 7, 0);
+  lv_img_set_zoom(icon, 384);
+  lv_img_set_antialias(icon, false);
+  lv_obj_align(icon, statPanel, LV_ALIGN_IN_LEFT_MID, 16, 0);
   lv_obj_set_click(icon, false);
+
+  lv_obj_t* divider = lv_line_create(lv_scr_act(), nullptr);
+  lv_line_set_points(divider, levelDivider, 2);
+  lv_obj_set_style_local_line_width(divider, LV_LINE_PART_MAIN, LV_STATE_DEFAULT, 3);
+  lv_obj_set_style_local_line_color(divider, LV_LINE_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(18, 18, 16));
+  lv_obj_align(divider, statPanel, LV_ALIGN_IN_TOP_LEFT, 121, 18);
+  lv_obj_set_click(divider, false);
 
   levelLabel = lv_label_create(lv_scr_act(), nullptr);
   lv_obj_set_style_local_text_font(levelLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &jetbrains_mono_42);
-  lv_obj_set_style_local_text_color(levelLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(246, 217, 121));
-  lv_obj_align(levelLabel, icon, LV_ALIGN_OUT_RIGHT_MID, 14, 0);
+  lv_obj_set_style_local_text_color(levelLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(215, 220, 67));
+
+  baseLevelLabel = lv_label_create(lv_scr_act(), nullptr);
+  lv_obj_set_style_local_text_font(baseLevelLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &jetbrains_mono_42);
+  lv_obj_set_style_local_text_color(baseLevelLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(215, 220, 67));
 
   xpLabel = lv_label_create(lv_scr_act(), nullptr);
-  lv_obj_set_style_local_text_color(xpLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(239, 224, 191));
-  lv_obj_align(xpLabel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 89);
+  lv_obj_set_style_local_text_color(xpLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(232, 227, 201));
+  lv_obj_align(xpLabel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 115);
 
   nextLabel = lv_label_create(lv_scr_act(), nullptr);
-  lv_obj_set_style_local_text_color(nextLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(181, 164, 132));
-  lv_obj_align(nextLabel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 111);
+  lv_obj_set_style_local_text_color(nextLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(185, 183, 154));
+  lv_obj_align(nextLabel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 136);
 
   progressBar = lv_bar_create(lv_scr_act(), nullptr);
-  lv_obj_set_size(progressBar, 204, 11);
+  lv_obj_set_size(progressBar, 204, 9);
   lv_bar_set_range(progressBar, 0, 100);
-  lv_obj_align(progressBar, nullptr, LV_ALIGN_IN_TOP_MID, 0, 139);
+  lv_obj_align(progressBar, nullptr, LV_ALIGN_IN_TOP_MID, 0, 158);
   lv_obj_set_style_local_radius(progressBar, LV_BAR_PART_BG, LV_STATE_DEFAULT, 0);
   lv_obj_set_style_local_radius(progressBar, LV_BAR_PART_INDIC, LV_STATE_DEFAULT, 0);
-  lv_obj_set_style_local_bg_color(progressBar, LV_BAR_PART_BG, LV_STATE_DEFAULT, lv_color_make(59, 44, 27));
-  lv_obj_set_style_local_bg_color(progressBar, LV_BAR_PART_INDIC, LV_STATE_DEFAULT, lv_color_make(192, 139, 56));
+  lv_obj_set_style_local_bg_color(progressBar, LV_BAR_PART_BG, LV_STATE_DEFAULT, lv_color_make(31, 31, 27));
+  lv_obj_set_style_local_bg_color(progressBar, LV_BAR_PART_INDIC, LV_STATE_DEFAULT, lv_color_make(173, 179, 61));
 
   repsLabel = lv_label_create(lv_scr_act(), nullptr);
-  lv_obj_set_style_local_text_color(repsLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(225, 190, 105));
-  lv_obj_align(repsLabel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 157);
+  lv_obj_set_style_local_text_color(repsLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(216, 220, 104));
+  lv_obj_align(repsLabel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 169);
 
   statusLabel = lv_label_create(lv_scr_act(), nullptr);
-  lv_obj_set_style_local_text_color(statusLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(181, 164, 132));
-  lv_obj_align(statusLabel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 180);
+  lv_obj_set_style_local_text_color(statusLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(185, 183, 154));
+  lv_obj_align(statusLabel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 188);
 
   toggleButton = lv_btn_create(lv_scr_act(), nullptr);
   toggleButton->user_data = this;
   lv_obj_set_event_cb(toggleButton, ToggleEvent);
-  lv_obj_set_size(toggleButton, 110, 37);
-  lv_obj_align(toggleButton, nullptr, LV_ALIGN_IN_BOTTOM_MID, 0, -2);
-  lv_obj_set_style_local_radius(toggleButton, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
-  lv_obj_set_style_local_bg_color(toggleButton, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(73, 57, 38));
+  lv_obj_set_size(toggleButton, 110, 29);
+  lv_obj_align(toggleButton, nullptr, LV_ALIGN_IN_BOTTOM_MID, 0, -1);
+  lv_obj_set_style_local_radius(toggleButton, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 3);
+  lv_obj_set_style_local_bg_color(toggleButton, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(78, 78, 70));
   lv_obj_set_style_local_border_width(toggleButton, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 2);
-  lv_obj_set_style_local_border_color(toggleButton, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(157, 122, 66));
+  lv_obj_set_style_local_border_color(toggleButton, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, lv_color_make(137, 132, 112));
   toggleLabel = lv_label_create(toggleButton, nullptr);
 
   motionController.StartStrengthWorkout();
@@ -191,10 +207,12 @@ void Strength::ToggleWorkout() {
 
 void Strength::Render() {
   const uint8_t level = Controllers::StrengthWorkout::Level(xp);
-  lv_label_set_text_fmt(levelLabel, "LVL %u", level);
-  lv_obj_align(levelLabel, nullptr, LV_ALIGN_IN_TOP_RIGHT, -17, 38);
+  lv_label_set_text_fmt(levelLabel, "%u", level);
+  lv_obj_align(levelLabel, statPanel, LV_ALIGN_IN_TOP_RIGHT, -56, 0);
+  lv_label_set_text_fmt(baseLevelLabel, "%u", level);
+  lv_obj_align(baseLevelLabel, statPanel, LV_ALIGN_IN_BOTTOM_RIGHT, -9, -1);
   lv_label_set_text_fmt(xpLabel, "%lu XP", static_cast<unsigned long>(xp));
-  lv_obj_align(xpLabel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 89);
+  lv_obj_align(xpLabel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 115);
 
   if (level == 99) {
     lv_label_set_text_static(nextLabel, "MAX LEVEL");
@@ -202,22 +220,22 @@ void Strength::Render() {
   } else {
     const uint32_t nextXp = Controllers::StrengthWorkout::XpForLevel(level + 1);
     const uint32_t previousXp = Controllers::StrengthWorkout::XpForLevel(level);
-    lv_label_set_text_fmt(nextLabel, "%lu XP to level %u", static_cast<unsigned long>(nextXp - xp), level + 1);
+    lv_label_set_text_fmt(nextLabel, "To %u: %lu XP", level + 1, static_cast<unsigned long>(nextXp - xp));
     lv_bar_set_value(progressBar, 100 * (xp - previousXp) / (nextXp - previousXp), LV_ANIM_OFF);
   }
-  lv_obj_align(nextLabel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 111);
+  lv_obj_align(nextLabel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 136);
 
   lv_label_set_text_fmt(repsLabel, "Reps %lu   +4 XP", static_cast<unsigned long>(sessionReps));
-  lv_obj_align(repsLabel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 157);
+  lv_obj_align(repsLabel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 169);
   if (saveFailed) {
     lv_label_set_text_static(statusLabel, "Save failed");
   } else if (!workoutRunning) {
     lv_label_set_text_static(statusLabel, "Paused");
   } else if (motionController.StrengthIsCalibrating()) {
-    lv_label_set_text_static(statusLabel, "Hold still to calibrate");
+    lv_label_set_text_static(statusLabel, "Calibrating...");
   } else {
     lv_label_set_text_static(statusLabel, "Move out and back");
   }
-  lv_obj_align(statusLabel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 180);
+  lv_obj_align(statusLabel, nullptr, LV_ALIGN_IN_TOP_MID, 0, 188);
   lv_label_set_text_static(toggleLabel, workoutRunning ? "Pause" : "Resume");
 }
