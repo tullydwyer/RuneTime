@@ -105,6 +105,28 @@ def parchment(w, h, seed):
     return result
 
 
+def stone_tile(w, h, seed, button=False):
+    result = []
+    for y in range(h):
+        for x in range(w):
+            edge = 3 + (noise(x // 3, y // 3, seed) % 3) - 1
+            corner = min(x, w - 1 - x) + min(y, h - 1 - y)
+            dist = min(x, w - 1 - x, y, h - 1 - y)
+            grain = noise(x, y, seed) % 17
+            if dist < edge or corner < 10:
+                color = 0
+            elif dist < edge + 2:
+                color = 1 if grain < 9 else 6
+            elif dist < edge + 5:
+                color = 5 if x + y < (w + h) // 2 else 3
+            else:
+                color = (5 if grain > 14 else 4) if button else (3 if grain < 12 else 4)
+                if grain == 8 and (x + 2 * y) % 11 == 0:
+                    color = 14 if button else 13
+            result.append(color)
+    return result
+
+
 IMAGES = {
     'rune_wall': (240, 240, wall(240, 240)),
     'rune_scroll_clock': (230, 96, parchment(230, 96, 1)),
@@ -114,6 +136,9 @@ IMAGES = {
     'rune_scroll_slot': (70, 78, parchment(70, 78, 5)),
     'rune_scroll_row': (228, 47, parchment(228, 47, 6)),
     'rune_scroll_utility': (115, 100, parchment(115, 100, 7)),
+    'rune_scroll_strength_session': (230, 59, parchment(230, 59, 8)),
+    'rune_strength_slot': (70, 78, stone_tile(70, 78, 9)),
+    'rune_strength_button': (76, 34, stone_tile(76, 34, 10, True)),
 }
 
 # A tiny wax seal closes the quest scroll without a long progress bar.

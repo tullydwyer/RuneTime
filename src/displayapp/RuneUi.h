@@ -10,6 +10,10 @@ LV_IMG_DECLARE(rune_scroll_quest);
 LV_IMG_DECLARE(rune_scroll_slot);
 LV_IMG_DECLARE(rune_scroll_row);
 LV_IMG_DECLARE(rune_scroll_utility);
+LV_IMG_DECLARE(rune_scroll_strength_session);
+LV_IMG_DECLARE(rune_strength_slot);
+LV_IMG_DECLARE(rune_strength_button);
+LV_IMG_DECLARE(strength_icon);
 
 // Hand-drawn indexed sprites retain the stepped, irregular edges of 2004 UI art.
 namespace RuneUi {
@@ -131,6 +135,51 @@ namespace RuneUi {
     lv_obj_set_style_local_text_font(caption, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &rune_small);
     lv_obj_set_style_local_text_color(caption, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::ink);
     lv_obj_align(caption, button, LV_ALIGN_IN_BOTTOM_MID, 0, -23);
+  }
+
+  struct StrengthWidgets {
+    lv_obj_t *level, *xp, *next, *reps, *status, *button, *buttonText;
+  };
+
+  inline StrengthWidgets StrengthTab() {
+    StoneBackdrop();
+    Text("SKILLS", 10, 3, Colors::gold, &jetbrains_mono_bold_20);
+    Sprite(&rune_scroll_clock, 5, 30);
+    Sprite(&rune_strength_slot, 13, 39);
+    auto* fist = Sprite(&strength_icon, 24, 52);
+    lv_obj_set_click(fist, false);
+    Text("STRENGTH", 90, 48, Colors::ink, &jetbrains_mono_bold_20);
+    Text("LEVEL", 91, 76, Colors::ink);
+    auto* level = Text("1 / 99", 96, 94, Colors::ink, &jetbrains_mono_bold_20);
+
+    Sprite(&rune_scroll_row, 6, 129);
+    Text("TOTAL XP", 16, 138, Colors::ink);
+    auto* xp = Text("0", 125, 138, Colors::ink);
+    auto* next = Text("TO 2: 83 XP", 16, 157, Colors::ink);
+
+    Sprite(&rune_scroll_strength_session, 5, 178);
+    auto* reps = Text("REPS 0", 14, 187, Colors::ink);
+    Text("+4 XP", 170, 187, Colors::ink);
+    auto* status = Text("Calibrating...", 14, 211, Colors::ink);
+
+    auto* button = lv_btn_create(lv_scr_act(), nullptr);
+    lv_btn_set_layout(button, LV_LAYOUT_OFF);
+    lv_obj_set_size(button, 76, 34);
+    lv_obj_set_pos(button, 156, 201);
+    lv_obj_set_style_local_bg_opa(button, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_TRANSP);
+    lv_obj_set_style_local_bg_opa(button, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_OPA_TRANSP);
+    lv_obj_set_style_local_border_width(button, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
+    auto* buttonSkin = lv_img_create(button, nullptr);
+    lv_img_set_src(buttonSkin, &rune_strength_button);
+    lv_obj_align(buttonSkin, button, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+    lv_obj_set_click(buttonSkin, false);
+    auto* buttonText = lv_label_create(button, nullptr);
+    lv_label_set_text_static(buttonText, "PAUSE");
+    lv_obj_set_style_local_text_font(buttonText, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &rune_small);
+    lv_obj_set_style_local_text_color(buttonText, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::gold);
+    lv_obj_align(buttonText, button, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_set_click(buttonText, false);
+    return {level, xp, next, reps, status, button, buttonText};
   }
 
   struct HomeWidgets {

@@ -34,12 +34,9 @@ namespace Pinetime::Applications::Screens {
     bool workoutRunning = true;
     bool saveFailed = false;
 
-    lv_obj_t* statPanel;
     lv_obj_t* levelLabel;
-    lv_obj_t* baseLevelLabel;
     lv_obj_t* xpLabel;
     lv_obj_t* nextLabel;
-    lv_obj_t* progressBar;
     lv_obj_t* repsLabel;
     lv_obj_t* statusLabel;
     lv_obj_t* toggleButton;

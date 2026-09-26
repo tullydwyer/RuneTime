@@ -14,6 +14,12 @@ and Agility shows the actual daily step count. The daily walking quest tracks th
 configured step goal and shows **QUEST COMPLETE!** at 100%. It does not award or
 modify Strength XP.
 
+The Strength workout now reads as a selected OSRS-style skill tab: a fist emblem
+on a chipped stone tile, the current level against 99, XP on a parchment record,
+and session reps on a second scroll. The jagged stone Pause/Resume control keeps
+the existing workout behavior. Level thresholds, saved XP, and rep detection are
+unchanged.
+
 ## Validation
 
 Build using `doc/ota-macos.md`, then run:
@@ -31,5 +37,5 @@ It renders 240×240 PPM previews in `build/ui-preview/`. The Strength regression
 test covers level thresholds and workout motion detection. These checks do not
 replace exercising touch, sensor readings and transitions on the physical watch.
 
-After OTA, check the GATT firmware revision is `1.16.0-runetime2004`, then validate
+After OTA, check the GATT firmware revision is `1.16.0-runetime2004s`, then validate
 on the watch using Settings → Firmware → Validate.

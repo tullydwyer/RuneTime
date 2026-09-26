@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cstdio>
+#include "displayapp/icons/strength/strength.c"
 #include "displayapp/RuneUi.h"
 
 extern "C" uint32_t xTaskGetTickCount() {
@@ -158,8 +159,35 @@ int main() {
     lv_label_set_text(label, names[i]);
   }
   Save("controls.ppm");
+  lv_obj_clean(lv_scr_act());
+
+  auto skill = RuneUi::StrengthTab();
+  lv_label_set_text(skill.level, "99 / 99");
+  lv_label_set_text(skill.xp, "200000000");
+  lv_label_set_text(skill.next, "MASTERY ACHIEVED");
+  lv_label_set_text(skill.reps, "REPS 50000000");
+  lv_label_set_text(skill.status, "Out + back");
+  lv_label_set_text(skill.buttonText, "RESUME");
+  lv_obj_align(skill.buttonText, skill.button, LV_ALIGN_CENTER, 0, 0);
+  Fits(skill.level, 90, 87, 226, 122);
+  Fits(skill.xp, 110, 135, 225, 156);
+  Fits(skill.next, 12, 154, 226, 176);
+  Fits(skill.reps, 11, 184, 150, 208);
+  Fits(skill.status, 11, 207, 154, 235);
+  Fits(skill.button, 150, 196, 239, 239);
+  Fits(skill.buttonText, 155, 201, 232, 235);
+  assert(lv_obj_get_click(skill.button));
+  Save("strength-max.ppm");
+  lv_label_set_text(skill.level, "42 / 99");
+  lv_label_set_text(skill.xp, "43222");
+  lv_label_set_text(skill.next, "To 43: 2307 XP");
+  lv_label_set_text(skill.reps, "REPS 7");
+  lv_label_set_text(skill.status, "Calibrating...");
+  lv_label_set_text(skill.buttonText, "PAUSE");
+  lv_obj_align(skill.buttonText, skill.button, LV_ALIGN_CENTER, 0, 0);
+  Save("strength.ppm");
   // Reinitializing the theme is supported and must not corrupt live styles.
   lv_pinetime_theme_init();
   lv_obj_clean(lv_scr_act());
-  puts("Home/inventory/settings bounds, long values, quest states, theme reset: PASS");
+  puts("Home/inventory/settings/strength bounds, long values, quest states, theme reset: PASS");
 }
