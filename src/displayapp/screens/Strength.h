@@ -4,6 +4,7 @@
 #include <lvgl/lvgl.h>
 
 #include "components/motion/MotionController.h"
+#include "components/motion/StrengthSet.h"
 #include "displayapp/Controllers.h"
 #include "displayapp/apps/Apps.h"
 #include "displayapp/screens/Screen.h"
@@ -17,6 +18,9 @@ namespace Pinetime::Applications::Screens {
 
     void Refresh() override;
     void ToggleWorkout();
+    void AdjustReps(int delta);
+    void LogSet();
+    bool OnButtonPushed() override;
 
   private:
     bool ReadProgress(const char* path, uint32_t& result);
@@ -29,9 +33,7 @@ namespace Pinetime::Applications::Screens {
     System::WakeLock wakeLock;
     uint32_t xp = 0;
     uint32_t savedXp = 0;
-    uint32_t sessionReps = 0;
-    uint32_t observedReps = 0;
-    bool workoutRunning = true;
+    Controllers::StrengthSet set;
     bool saveFailed = false;
 
     lv_obj_t* levelLabel;
@@ -41,6 +43,9 @@ namespace Pinetime::Applications::Screens {
     lv_obj_t* statusLabel;
     lv_obj_t* toggleButton;
     lv_obj_t* toggleLabel;
+    lv_obj_t* minusButton;
+    lv_obj_t* plusButton;
+    lv_obj_t* plusLabel;
     lv_task_t* refreshTask;
   };
 }

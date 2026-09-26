@@ -68,7 +68,8 @@ namespace RuneUi {
     lv_obj_set_style_local_text_color(matrix, LV_BTNMATRIX_PART_BTN, LV_STATE_DEFAULT, Colors::ink);
     const auto* areas = static_cast<lv_btnmatrix_ext_t*>(lv_obj_get_ext_attr(matrix))->button_areas;
     for (unsigned i = 0; i < 6; ++i) {
-      Sprite(&rune_scroll_slot, lv_obj_get_x(matrix) + (areas[i].x1 + areas[i].x2 + 1 - 70) / 2,
+      Sprite(&rune_scroll_slot,
+             lv_obj_get_x(matrix) + (areas[i].x1 + areas[i].x2 + 1 - 70) / 2,
              lv_obj_get_y(matrix) + (areas[i].y1 + areas[i].y2 + 1 - 78) / 2);
     }
     return matrix;
@@ -138,7 +139,7 @@ namespace RuneUi {
   }
 
   struct StrengthWidgets {
-    lv_obj_t *level, *xp, *next, *reps, *status, *button, *buttonText;
+    lv_obj_t *level, *xp, *next, *reps, *status, *button, *buttonText, *minus, *plus, *plusText;
   };
 
   inline StrengthWidgets StrengthTab() {
@@ -152,34 +153,41 @@ namespace RuneUi {
     Text("LEVEL", 91, 76, Colors::ink);
     auto* level = Text("1 / 99", 96, 94, Colors::ink, &jetbrains_mono_bold_20);
 
-    Sprite(&rune_scroll_row, 6, 129);
-    Text("TOTAL XP", 16, 138, Colors::ink);
-    auto* xp = Text("0", 125, 138, Colors::ink);
-    auto* next = Text("TO 2: 83 XP", 16, 157, Colors::ink);
+    Sprite(&rune_scroll_row, 6, 119);
+    Text("TOTAL XP", 16, 126, Colors::ink);
+    auto* xp = Text("0", 125, 126, Colors::ink);
+    auto* next = Text("TO 2: 83 XP", 16, 145, Colors::ink);
 
-    Sprite(&rune_scroll_strength_session, 5, 178);
-    auto* reps = Text("REPS 0", 14, 187, Colors::ink);
-    Text("+4 XP", 170, 187, Colors::ink);
-    auto* status = Text("Calibrating...", 14, 211, Colors::ink);
+    auto* status = Text("Start or log any lift", 14, 164, Colors::gold);
+    auto* reps = Text("LAST 0 REPS", 14, 183);
+    Text("+4 XP/REP", 147, 183, Colors::gold);
 
-    auto* button = lv_btn_create(lv_scr_act(), nullptr);
-    lv_btn_set_layout(button, LV_LAYOUT_OFF);
-    lv_obj_set_size(button, 76, 34);
-    lv_obj_set_pos(button, 156, 201);
-    lv_obj_set_style_local_bg_opa(button, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_TRANSP);
-    lv_obj_set_style_local_bg_opa(button, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_OPA_TRANSP);
-    lv_obj_set_style_local_border_width(button, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
-    auto* buttonSkin = lv_img_create(button, nullptr);
-    lv_img_set_src(buttonSkin, &rune_strength_button);
-    lv_obj_align(buttonSkin, button, LV_ALIGN_IN_TOP_LEFT, 0, 0);
-    lv_obj_set_click(buttonSkin, false);
-    auto* buttonText = lv_label_create(button, nullptr);
-    lv_label_set_text_static(buttonText, "PAUSE");
-    lv_obj_set_style_local_text_font(buttonText, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &rune_small);
-    lv_obj_set_style_local_text_color(buttonText, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::gold);
-    lv_obj_align(buttonText, button, LV_ALIGN_CENTER, 0, 0);
-    lv_obj_set_click(buttonText, false);
-    return {level, xp, next, reps, status, button, buttonText};
+    auto makeButton = [](int x, const char* caption, lv_obj_t*& text) {
+      auto* button = lv_btn_create(lv_scr_act(), nullptr);
+      lv_btn_set_layout(button, LV_LAYOUT_OFF);
+      lv_obj_set_size(button, 76, 38);
+      lv_obj_set_pos(button, x, 201);
+      lv_obj_set_style_local_bg_opa(button, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_TRANSP);
+      lv_obj_set_style_local_bg_opa(button, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_OPA_TRANSP);
+      lv_obj_set_style_local_border_width(button, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
+      auto* skin = lv_img_create(button, nullptr);
+      lv_img_set_src(skin, &rune_strength_button);
+      lv_obj_align(skin, button, LV_ALIGN_CENTER, 0, 0);
+      lv_obj_set_click(skin, false);
+      text = lv_label_create(button, nullptr);
+      lv_label_set_text_static(text, caption);
+      lv_obj_set_style_local_text_font(text, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &rune_small);
+      lv_obj_set_style_local_text_color(text, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::gold);
+      lv_obj_align(text, button, LV_ALIGN_CENTER, 0, 0);
+      lv_obj_set_click(text, false);
+      return button;
+    };
+    lv_obj_t *minusText, *plusText, *buttonText;
+    auto* minus = makeButton(3, "-", minusText);
+    auto* plus = makeButton(82, "LOG", plusText);
+    auto* button = makeButton(161, "START", buttonText);
+    lv_obj_set_hidden(minus, true);
+    return {level, xp, next, reps, status, button, buttonText, minus, plus, plusText};
   }
 
   struct HomeWidgets {

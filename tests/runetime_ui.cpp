@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cstdio>
+#include <initializer_list>
 #include "displayapp/icons/strength/strength.c"
 #include "displayapp/RuneUi.h"
 
@@ -165,27 +166,45 @@ int main() {
   lv_label_set_text(skill.level, "99 / 99");
   lv_label_set_text(skill.xp, "200000000");
   lv_label_set_text(skill.next, "MASTERY ACHIEVED");
-  lv_label_set_text(skill.reps, "REPS 50000000");
-  lv_label_set_text(skill.status, "Out + back");
-  lv_label_set_text(skill.buttonText, "RESUME");
+  lv_label_set_text(skill.reps, "SET 999 REPS");
+  lv_label_set_text(skill.status, "Adjust reps, then save");
+  lv_label_set_text(skill.buttonText, "SAVE");
+  lv_label_set_text(skill.plusText, "+");
+  lv_obj_set_hidden(skill.minus, false);
   lv_obj_align(skill.buttonText, skill.button, LV_ALIGN_CENTER, 0, 0);
+  lv_obj_align(skill.plusText, skill.plus, LV_ALIGN_CENTER, 0, 0);
   Fits(skill.level, 90, 87, 226, 122);
-  Fits(skill.xp, 110, 135, 225, 156);
-  Fits(skill.next, 12, 154, 226, 176);
-  Fits(skill.reps, 11, 184, 150, 208);
-  Fits(skill.status, 11, 207, 154, 235);
-  Fits(skill.button, 150, 196, 239, 239);
-  Fits(skill.buttonText, 155, 201, 232, 235);
-  assert(lv_obj_get_click(skill.button));
-  Save("strength-max.ppm");
+  Fits(skill.xp, 110, 122, 225, 144);
+  Fits(skill.next, 12, 142, 226, 164);
+  Fits(skill.reps, 11, 180, 146, 201);
+  Fits(skill.status, 11, 160, 237, 184);
+  Fits(skill.button, 160, 200, 239, 239);
+  Fits(skill.buttonText, 161, 201, 237, 239);
+  for (auto* button : {skill.minus, skill.plus, skill.button}) {
+    assert(lv_obj_get_click(button));
+    assert(lv_obj_get_width(button) >= 38 && lv_obj_get_height(button) >= 38);
+  }
+  Save("strength-review.ppm");
+  lv_label_set_text(skill.status, "Save failed: retrying");
+  Fits(skill.status, 11, 160, 237, 184);
   lv_label_set_text(skill.level, "42 / 99");
   lv_label_set_text(skill.xp, "43222");
   lv_label_set_text(skill.next, "To 43: 2307 XP");
-  lv_label_set_text(skill.reps, "REPS 7");
-  lv_label_set_text(skill.status, "Calibrating...");
-  lv_label_set_text(skill.buttonText, "PAUSE");
+  lv_label_set_text(skill.reps, "SET 7 REPS");
+  lv_label_set_text(skill.status, "Hold still briefly");
+  lv_label_set_text(skill.buttonText, "FINISH");
+  lv_obj_set_hidden(skill.minus, true);
+  lv_obj_set_hidden(skill.plus, true);
   lv_obj_align(skill.buttonText, skill.button, LV_ALIGN_CENTER, 0, 0);
+  Fits(skill.buttonText, 161, 201, 237, 239);
   Save("strength.ppm");
+  lv_label_set_text(skill.status, "Start or log any lift");
+  lv_label_set_text(skill.buttonText, "START");
+  lv_label_set_text(skill.plusText, "LOG");
+  lv_obj_set_hidden(skill.plus, false);
+  lv_obj_align(skill.plusText, skill.plus, LV_ALIGN_CENTER, 0, 0);
+  lv_obj_align(skill.buttonText, skill.button, LV_ALIGN_CENTER, 0, 0);
+  Save("strength-ready.ppm");
   // Reinitializing the theme is supported and must not corrupt live styles.
   lv_pinetime_theme_init();
   lv_obj_clean(lv_scr_act());

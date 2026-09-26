@@ -26,12 +26,26 @@ namespace {
       static_cast<Strength*>(object->user_data)->ToggleWorkout();
     }
   }
+
+  void MinusEvent(lv_obj_t* object, lv_event_t event) {
+    if (event == LV_EVENT_CLICKED || event == LV_EVENT_LONG_PRESSED_REPEAT) {
+      static_cast<Strength*>(object->user_data)->AdjustReps(-1);
+    }
+  }
+
+  void PlusEvent(lv_obj_t* object, lv_event_t event) {
+    auto* screen = static_cast<Strength*>(object->user_data);
+    if (event == LV_EVENT_CLICKED) {
+      screen->LogSet();
+    } else if (event == LV_EVENT_LONG_PRESSED_REPEAT) {
+      screen->AdjustReps(1);
+    }
+  }
 }
 
 Strength::Strength(Controllers::MotionController& motionController, Controllers::FS& filesystem, System::SystemTask& systemTask)
   : motionController {motionController}, filesystem {filesystem}, wakeLock {systemTask} {
   LoadProgress();
-  observedReps = motionController.StrengthReps();
 
   const auto skill = RuneUi::StrengthTab();
   levelLabel = skill.level;
@@ -44,8 +58,13 @@ Strength::Strength(Controllers::MotionController& motionController, Controllers:
   toggleButton->user_data = this;
   lv_obj_set_event_cb(toggleButton, ToggleEvent);
 
-  motionController.StartStrengthWorkout();
-  wakeLock.Lock();
+  minusButton = skill.minus;
+  plusButton = skill.plus;
+  plusLabel = skill.plusText;
+  minusButton->user_data = this;
+  plusButton->user_data = this;
+  lv_obj_set_event_cb(minusButton, MinusEvent);
+  lv_obj_set_event_cb(plusButton, PlusEvent);
   Render();
   refreshTask = lv_task_create(RefreshTaskCallback, 100, LV_TASK_PRIO_MID, this);
 }
@@ -104,15 +123,7 @@ bool Strength::SaveProgress() {
 }
 
 void Strength::Refresh() {
-  const uint32_t currentReps = motionController.StrengthReps();
-  if (currentReps > observedReps) {
-    const uint32_t newReps = currentReps - observedReps;
-    sessionReps += newReps;
-    xp = static_cast<uint32_t>(std::min<uint64_t>(Controllers::StrengthWorkout::maxXp,
-                                                  static_cast<uint64_t>(xp) +
-                                                    static_cast<uint64_t>(newReps) * Controllers::StrengthWorkout::xpPerRep));
-    observedReps = currentReps;
-  }
+  set.Observe(motionController.StrengthReps());
   if (xp != savedXp) {
     saveFailed = !SaveProgress();
   }
@@ -120,17 +131,50 @@ void Strength::Refresh() {
 }
 
 void Strength::ToggleWorkout() {
-  if (workoutRunning) {
-    Refresh();
-    motionController.StopStrengthWorkout();
-    wakeLock.Release();
-    workoutRunning = false;
-  } else {
-    motionController.StartStrengthWorkout();
-    wakeLock.Lock();
-    workoutRunning = true;
+  using State = Controllers::StrengthSet::State;
+  switch (set.CurrentState()) {
+    case State::Ready:
+      set.Start(motionController.StrengthReps());
+      motionController.StartStrengthWorkout();
+      wakeLock.Lock();
+      break;
+    case State::Counting:
+      set.Observe(motionController.StrengthReps());
+      motionController.StopStrengthWorkout();
+      set.Finish();
+      wakeLock.Release();
+      break;
+    case State::Review:
+      xp = set.Confirm(xp);
+      // Refresh retries failed writes without awarding the set a second time.
+      Refresh();
+      break;
   }
   Render();
+}
+
+void Strength::AdjustReps(int delta) {
+  set.Adjust(delta);
+  Render();
+}
+
+void Strength::LogSet() {
+  if (set.CurrentState() == Controllers::StrengthSet::State::Ready) {
+    set.LogManually();
+  } else {
+    set.Adjust(1);
+  }
+  Render();
+}
+
+bool Strength::OnButtonPushed() {
+  // A button press while lifting finishes the estimate for review, rather than
+  // silently abandoning the set when the display app navigates away.
+  if (set.CurrentState() == Controllers::StrengthSet::State::Counting) {
+    ToggleWorkout();
+    return true;
+  }
+  return false;
 }
 
 void Strength::Render() {
@@ -145,16 +189,24 @@ void Strength::Render() {
     lv_label_set_text_fmt(nextLabel, "To %u: %lu XP", level + 1, static_cast<unsigned long>(nextXp - xp));
   }
 
-  lv_label_set_text_fmt(repsLabel, "REPS %lu", static_cast<unsigned long>(sessionReps));
+  using State = Controllers::StrengthSet::State;
+  const auto state = set.CurrentState();
+  lv_label_set_text_fmt(repsLabel, "%s %u REPS", state == State::Ready ? "LAST" : "SET", set.Reps());
   if (saveFailed) {
-    lv_label_set_text_static(statusLabel, "Save failed");
-  } else if (!workoutRunning) {
-    lv_label_set_text_static(statusLabel, "Paused");
+    lv_label_set_text_static(statusLabel, "Save failed: retrying");
+  } else if (state == State::Ready) {
+    lv_label_set_text_static(statusLabel, "Start or log any lift");
+  } else if (state == State::Review) {
+    lv_label_set_text_static(statusLabel, "Adjust reps, then save");
   } else if (motionController.StrengthIsCalibrating()) {
-    lv_label_set_text_static(statusLabel, "Calibrating...");
+    lv_label_set_text_static(statusLabel, "Hold still briefly");
   } else {
-    lv_label_set_text_static(statusLabel, "Out + back");
+    lv_label_set_text_static(statusLabel, "Auto estimate");
   }
-  lv_label_set_text_static(toggleLabel, workoutRunning ? "PAUSE" : "RESUME");
+  lv_label_set_text_static(toggleLabel, state == State::Ready ? "START" : (state == State::Counting ? "FINISH" : "SAVE"));
   lv_obj_align(toggleLabel, toggleButton, LV_ALIGN_CENTER, 0, 0);
+  lv_label_set_text_static(plusLabel, state == State::Ready ? "LOG" : "+");
+  lv_obj_align(plusLabel, plusButton, LV_ALIGN_CENTER, 0, 0);
+  lv_obj_set_hidden(minusButton, state != State::Review);
+  lv_obj_set_hidden(plusButton, state == State::Counting);
 }
