@@ -1,3 +1,4 @@
+#include "displayapp/InfiniTimeTheme.h"
 #include "displayapp/screens/settings/SettingSetDate.h"
 #include "displayapp/screens/settings/SettingSetDateTime.h"
 #include <lvgl/lvgl.h>
@@ -55,7 +56,7 @@ SettingSetDate::SettingSetDate(Pinetime::Controllers::DateTime& dateTimeControll
   lv_obj_align(title, lv_scr_act(), LV_ALIGN_IN_TOP_MID, 15, 15);
 
   lv_obj_t* icon = lv_label_create(lv_scr_act(), nullptr);
-  lv_obj_set_style_local_text_color(icon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_ORANGE);
+  lv_obj_set_style_local_text_color(icon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::orange);
 
   lv_label_set_text_static(icon, Symbols::clock);
   lv_label_set_align(icon, LV_LABEL_ALIGN_CENTER);

@@ -72,5 +72,25 @@
       ],
       "bpp": 2,
       "size": 25
+   },
+   "rune_small": {
+      "sources": [
+         {
+            "file": "JetBrainsMono-Bold.ttf",
+            "range": "0x20-0x7e, 0xb0"
+         }
+      ],
+      "bpp": 1,
+      "size": 16
+   },
+   "rune_clock": {
+      "sources": [
+         {
+            "file": "JetBrainsMono-ExtraBold.ttf",
+            "range": "0x30-0x3a"
+         }
+      ],
+      "bpp": 1,
+      "size": 58
    }
 }

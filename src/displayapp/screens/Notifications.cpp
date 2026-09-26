@@ -50,7 +50,7 @@ Notifications::Notifications(DisplayApp* app,
     timeoutLine = lv_line_create(lv_scr_act(), nullptr);
 
     lv_obj_set_style_local_line_width(timeoutLine, LV_LINE_PART_MAIN, LV_STATE_DEFAULT, 3);
-    lv_obj_set_style_local_line_color(timeoutLine, LV_LINE_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_obj_set_style_local_line_color(timeoutLine, LV_LINE_PART_MAIN, LV_STATE_DEFAULT, Colors::parchment);
     lv_obj_set_style_local_line_rounded(timeoutLine, LV_LINE_PART_MAIN, LV_STATE_DEFAULT, true);
 
     lv_line_set_points(timeoutLine, timeoutLinePoints, 2);
@@ -133,7 +133,7 @@ void Notifications::DismissToBlack() {
   // create black transition screen to let the notification dismiss to blackness
   lv_obj_t* blackBox = lv_obj_create(lv_scr_act(), nullptr);
   lv_obj_set_size(blackBox, LV_HOR_RES, LV_VER_RES);
-  lv_obj_set_style_local_bg_color(blackBox, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLACK);
+  lv_obj_set_style_local_bg_color(blackBox, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, Colors::bgDark);
   dismissingNotification = true;
 }
 
@@ -265,7 +265,7 @@ Notifications::NotificationItem::NotificationItem(const char* title,
   : alertNotificationService {alertNotificationService}, motorController {motorController} {
   container = lv_cont_create(lv_scr_act(), nullptr);
   lv_obj_set_size(container, LV_HOR_RES, LV_VER_RES);
-  lv_obj_set_style_local_bg_color(container, LV_CONT_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLACK);
+  lv_obj_set_style_local_bg_color(container, LV_CONT_PART_MAIN, LV_STATE_DEFAULT, Colors::bgDark);
   lv_obj_set_style_local_pad_all(container, LV_CONT_PART_MAIN, LV_STATE_DEFAULT, 0);
   lv_obj_set_style_local_pad_inner(container, LV_CONT_PART_MAIN, LV_STATE_DEFAULT, 0);
   lv_obj_set_style_local_border_width(container, LV_CONT_PART_MAIN, LV_STATE_DEFAULT, 0);
@@ -337,7 +337,7 @@ Notifications::NotificationItem::NotificationItem(const char* title,
       lv_obj_align(bt_reject, nullptr, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
       label_reject = lv_label_create(bt_reject, nullptr);
       lv_label_set_text_static(label_reject, Symbols::phoneSlash);
-      lv_obj_set_style_local_bg_color(bt_reject, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
+      lv_obj_set_style_local_bg_color(bt_reject, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::deepOrange);
 
       bt_mute = lv_btn_create(container, nullptr);
       bt_mute->user_data = this;

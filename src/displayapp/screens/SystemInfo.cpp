@@ -80,13 +80,13 @@ std::unique_ptr<Screen> SystemInfo::CreateScreen1() {
   lv_obj_t* label = lv_label_create(lv_scr_act(), nullptr);
   lv_label_set_recolor(label, true);
   lv_label_set_text_fmt(label,
-                        "#FFFF00 InfiniTime#\n\n"
-                        "#808080 Version# %ld.%ld.%ld\n"
-                        "#808080 Short Ref# %s\n"
-                        "#808080 Build date#\n"
+                        "#ffd464 InfiniTime#\n\n"
+                        "#bcb091 Version# %ld.%ld.%ld\n"
+                        "#bcb091 Short Ref# %s\n"
+                        "#bcb091 Build date#\n"
                         "%s\n"
                         "%s\n\n"
-                        "#808080 Bootloader# %s",
+                        "#bcb091 Bootloader# %s",
                         Version::Major(),
                         Version::Minor(),
                         Version::Patch(),
@@ -146,15 +146,15 @@ std::unique_ptr<Screen> SystemInfo::CreateScreen2() {
   lv_obj_t* label = lv_label_create(lv_scr_act(), nullptr);
   lv_label_set_recolor(label, true);
   lv_label_set_text_fmt(label,
-                        "#808080 Date# %04d-%02d-%02d\n"
-                        "#808080 Time# %02d:%02d:%02d\n"
-                        "#808080 Uptime#\n %02lud %02lu:%02lu:%02lu\n"
-                        "#808080 Battery# %d%%/%03imV\n"
-                        "#808080 Backlight# %s\n"
-                        "#808080 Last reset# %s\n"
-                        "#808080 Accel.# %s\n"
-                        "#808080 Touch.# %x.%x.%x\n"
-                        "#808080 Model# %s",
+                        "#bcb091 Date# %04d-%02d-%02d\n"
+                        "#bcb091 Time# %02d:%02d:%02d\n"
+                        "#bcb091 Uptime#\n %02lud %02lu:%02lu:%02lu\n"
+                        "#bcb091 Battery# %d%%/%03imV\n"
+                        "#bcb091 Backlight# %s\n"
+                        "#bcb091 Last reset# %s\n"
+                        "#bcb091 Accel.# %s\n"
+                        "#bcb091 Touch.# %x.%x.%x\n"
+                        "#bcb091 Model# %s",
                         dateTimeController.Year(),
                         static_cast<uint8_t>(dateTimeController.Month()),
                         dateTimeController.Day(),
@@ -180,6 +180,7 @@ std::unique_ptr<Screen> SystemInfo::CreateScreen2() {
 
 extern int mallocFailedCount;
 extern int stackOverflowCount;
+
 std::unique_ptr<Screen> SystemInfo::CreateScreen3() {
   lv_mem_monitor_t mon;
   lv_mem_monitor(&mon);
@@ -189,16 +190,16 @@ std::unique_ptr<Screen> SystemInfo::CreateScreen3() {
   const auto& bleAddr = bleController.Address();
   auto spiFlashId = spiNorFlash.GetIdentification();
   lv_label_set_text_fmt(label,
-                        "#808080 BLE MAC#\n"
+                        "#bcb091 BLE MAC#\n"
                         " %02x:%02x:%02x:%02x:%02x:%02x\n"
                         "\n"
-                        "#808080 SPI Flash# %02x-%02x-%02x\n"
+                        "#bcb091 SPI Flash# %02x-%02x-%02x\n"
                         "\n"
-                        "#808080 Memory heap#\n"
-                        " #808080 Free# %d/%d\n"
-                        " #808080 Min free# %d\n"
-                        " #808080 Alloc err# %d\n"
-                        " #808080 Ovrfl err# %d",
+                        "#bcb091 Memory heap#\n"
+                        " #bcb091 Free# %d/%d\n"
+                        " #bcb091 Min free# %d\n"
+                        " #bcb091 Alloc err# %d\n"
+                        " #bcb091 Ovrfl err# %d",
                         bleAddr[5],
                         bleAddr[4],
                         bleAddr[3],
@@ -291,10 +292,10 @@ std::unique_ptr<Screen> SystemInfo::CreateScreen5() {
                            "under the terms of\n"
                            "the GNU General\n"
                            "Public License v3\n"
-                           "#808080 Source code#\n"
-                           "#FFFF00 https://github.com/#\n"
-                           "#FFFF00 InfiniTimeOrg/#\n"
-                           "#FFFF00 InfiniTime#");
+                           "#bcb091 Source code#\n"
+                           "#ffd464 https://github.com/#\n"
+                           "#ffd464 InfiniTimeOrg/#\n"
+                           "#ffd464 InfiniTime#");
   lv_label_set_align(label, LV_LABEL_ALIGN_CENTER);
   lv_obj_align(label, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
   return std::make_unique<Screens::Label>(4, 5, label);

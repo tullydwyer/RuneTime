@@ -22,7 +22,7 @@ Timer::Timer(Controllers::Timer& timerController, Controllers::MotorController& 
 
   lv_obj_t* colonLabel = lv_label_create(lv_scr_act(), nullptr);
   lv_obj_set_style_local_text_font(colonLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &jetbrains_mono_76);
-  lv_obj_set_style_local_text_color(colonLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+  lv_obj_set_style_local_text_color(colonLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::parchment);
   lv_label_set_text_static(colonLabel, ":");
   lv_obj_align(colonLabel, lv_scr_act(), LV_ALIGN_CENTER, 0, -29);
 
@@ -41,8 +41,8 @@ Timer::Timer(Controllers::Timer& timerController, Controllers::MotorController& 
   highlightMask = lv_objmask_add_mask(highlightObjectMask, &tmpMaskLine);
 
   lv_obj_t* btnHighlight = lv_obj_create(highlightObjectMask, nullptr);
-  lv_obj_set_style_local_radius(btnHighlight, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_RADIUS_CIRCLE);
-  lv_obj_set_style_local_bg_color(btnHighlight, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_ORANGE);
+  lv_obj_set_style_local_radius(btnHighlight, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 2);
+  lv_obj_set_style_local_bg_color(btnHighlight, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, Colors::orange);
   lv_obj_set_size(btnHighlight, LV_HOR_RES, 50);
   lv_obj_align(btnHighlight, lv_scr_act(), LV_ALIGN_IN_BOTTOM_MID, 0, 0);
 
@@ -55,7 +55,7 @@ Timer::Timer(Controllers::Timer& timerController, Controllers::MotorController& 
 
   btnPlayPause = lv_btn_create(btnObjectMask, nullptr);
   btnPlayPause->user_data = this;
-  lv_obj_set_style_local_radius(btnPlayPause, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_RADIUS_CIRCLE);
+  lv_obj_set_style_local_radius(btnPlayPause, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 2);
   lv_obj_set_style_local_bg_color(btnPlayPause, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, Colors::bgAlt);
   lv_obj_set_event_cb(btnPlayPause, btnEventHandler);
   lv_obj_set_size(btnPlayPause, LV_HOR_RES, 50);
@@ -175,7 +175,7 @@ void Timer::SetTimerRinging() {
   minuteCounter.HideControls();
   secondCounter.HideControls();
   lv_label_set_text_static(txtPlayPause, "Reset");
-  lv_obj_set_style_local_bg_color(btnPlayPause, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
+  lv_obj_set_style_local_bg_color(btnPlayPause, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, Colors::deepOrange);
 }
 
 void Timer::ToggleRunning() {

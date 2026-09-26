@@ -4,6 +4,7 @@
 #include "displayapp/screens/BatteryIcon.h"
 #include "components/ble/BleController.h"
 #include "displayapp/InfiniTimeTheme.h"
+#include "displayapp/RuneUi.h"
 
 using namespace Pinetime::Applications::Screens;
 
@@ -42,6 +43,7 @@ QuickSettings::QuickSettings(Pinetime::Applications::DisplayApp* app,
     settingsController {settingsController},
     statusIcons(batteryController, bleController, alarmController) {
 
+  RuneUi::StoneBackdrop();
   statusIcons.Create();
 
   // This is the distance (padding) between all objects on this screen.
@@ -59,8 +61,11 @@ QuickSettings::QuickSettings(Pinetime::Applications::DisplayApp* app,
   static constexpr uint8_t buttonXOffset = (LV_HOR_RES_MAX - buttonWidth * 2 - innerDistance) / 2;
 
   lv_style_init(&btn_style);
-  lv_style_set_radius(&btn_style, LV_STATE_DEFAULT, buttonHeight / 4);
-  lv_style_set_bg_color(&btn_style, LV_STATE_DEFAULT, Colors::bgAlt);
+  lv_style_set_radius(&btn_style, LV_STATE_DEFAULT, 2);
+  lv_style_set_bg_color(&btn_style, LV_STATE_DEFAULT, Colors::scroll);
+  lv_style_set_bg_color(&btn_style, LV_STATE_CHECKED, Colors::green);
+  lv_style_set_border_color(&btn_style, LV_STATE_DEFAULT, Colors::stoneShadow);
+  lv_style_set_border_width(&btn_style, LV_STATE_DEFAULT, 2);
 
   btn1 = lv_btn_create(lv_scr_act(), nullptr);
   btn1->user_data = this;
@@ -68,6 +73,7 @@ QuickSettings::QuickSettings(Pinetime::Applications::DisplayApp* app,
   lv_obj_add_style(btn1, LV_BTN_PART_MAIN, &btn_style);
   lv_obj_set_size(btn1, buttonWidth, buttonHeight);
   lv_obj_align(btn1, nullptr, LV_ALIGN_IN_TOP_LEFT, buttonXOffset, barHeight);
+  RuneUi::SkinUtilityButton(btn1);
 
   btn1_lvl = lv_label_create(btn1, nullptr);
   lv_obj_set_style_local_text_font(btn1_lvl, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_sys_48);
@@ -79,21 +85,22 @@ QuickSettings::QuickSettings(Pinetime::Applications::DisplayApp* app,
   lv_obj_add_style(btn2, LV_BTN_PART_MAIN, &btn_style);
   lv_obj_set_size(btn2, buttonWidth, buttonHeight);
   lv_obj_align(btn2, nullptr, LV_ALIGN_IN_TOP_RIGHT, -buttonXOffset, barHeight);
+  RuneUi::SkinUtilityButton(btn2);
 
   lv_obj_t* lbl_btn;
   lbl_btn = lv_label_create(btn2, nullptr);
   lv_obj_set_style_local_text_font(lbl_btn, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_sys_48);
   lv_label_set_text_static(lbl_btn, Symbols::flashlight);
+  auto* btn2_lvl = lbl_btn;
 
   btn3 = lv_btn_create(lv_scr_act(), nullptr);
   btn3->user_data = this;
   lv_obj_set_event_cb(btn3, ButtonEventHandler);
   lv_obj_add_style(btn3, LV_BTN_PART_MAIN, &btn_style);
-  lv_obj_set_style_local_bg_color(btn3, LV_BTN_PART_MAIN, static_cast<lv_state_t>(ButtonState::NotificationsOff), LV_COLOR_RED);
-  static constexpr lv_color_t violet = LV_COLOR_MAKE(0x60, 0x00, 0xff);
-  lv_obj_set_style_local_bg_color(btn3, LV_BTN_PART_MAIN, static_cast<lv_state_t>(ButtonState::Sleep), violet);
+  lv_obj_set_style_local_bg_color(btn3, LV_BTN_PART_MAIN, static_cast<lv_state_t>(ButtonState::Sleep), Colors::scrollLight);
   lv_obj_set_size(btn3, buttonWidth, buttonHeight);
   lv_obj_align(btn3, nullptr, LV_ALIGN_IN_BOTTOM_LEFT, buttonXOffset, 0);
+  RuneUi::SkinUtilityButton(btn3);
 
   btn3_lvl = lv_label_create(btn3, nullptr);
   lv_obj_set_style_local_text_font(btn3_lvl, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_sys_48);
@@ -114,10 +121,19 @@ QuickSettings::QuickSettings(Pinetime::Applications::DisplayApp* app,
   lv_obj_add_style(btn4, LV_BTN_PART_MAIN, &btn_style);
   lv_obj_set_size(btn4, buttonWidth, buttonHeight);
   lv_obj_align(btn4, nullptr, LV_ALIGN_IN_BOTTOM_RIGHT, -buttonXOffset, 0);
+  RuneUi::SkinUtilityButton(btn4);
 
   lbl_btn = lv_label_create(btn4, nullptr);
   lv_obj_set_style_local_text_font(lbl_btn, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_sys_48);
   lv_label_set_text_static(lbl_btn, Symbols::settings);
+
+  // Compact captions make the four utility tabs readable at a glance.
+  const char* captions[] = {"LIGHT", "TORCH", "CHAT", "SETTINGS"};
+  lv_obj_t* buttons[] = {btn1, btn2, btn3, btn4};
+  lv_obj_t* icons[] = {btn1_lvl, btn2_lvl, btn3_lvl, lbl_btn};
+  for (unsigned i = 0; i < 4; ++i) {
+    RuneUi::ButtonCaption(buttons[i], icons[i], captions[i]);
+  }
 
   taskUpdate = lv_task_create(lv_update_task, 5000, LV_TASK_PRIO_MID, this);
 

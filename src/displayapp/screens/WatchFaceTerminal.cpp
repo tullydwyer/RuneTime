@@ -41,7 +41,7 @@ WatchFaceTerminal::WatchFaceTerminal(Controllers::DateTime& dateTimeController,
 
   labelPrompt1 = lv_label_create(container, nullptr);
   lv_obj_set_style_local_text_color(labelPrompt1, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
-  lv_label_set_text_static(labelPrompt1, "user@watch:~ $ now");
+  lv_label_set_text_static(labelPrompt1, "Quest journal:");
 
   labelTime = lv_label_create(container, nullptr);
   lv_label_set_recolor(labelTime, true);
@@ -67,7 +67,7 @@ WatchFaceTerminal::WatchFaceTerminal(Controllers::DateTime& dateTimeController,
 
   labelPrompt2 = lv_label_create(container, nullptr);
   lv_obj_set_style_local_text_color(labelPrompt2, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
-  lv_label_set_text_static(labelPrompt2, "user@watch:~ $");
+  lv_label_set_text_static(labelPrompt2, "Adventure awaits.");
 
   lv_obj_align(container, nullptr, LV_ALIGN_IN_TOP_LEFT, 0, 7);
 
@@ -106,9 +106,9 @@ void WatchFaceTerminal::Refresh() {
         hour = hour - 12;
         ampmChar[0] = 'P';
       }
-      lv_label_set_text_fmt(labelTime, "#ffffff [TIME]# #11cc55 %02d:%02d:%02d %s#", hour, minute, second, ampmChar);
+      lv_label_set_text_fmt(labelTime, "#ebdfbc [TIME]# #a8b863 %02d:%02d:%02d %s#", hour, minute, second, ampmChar);
     } else {
-      lv_label_set_text_fmt(labelTime, "#ffffff [TIME]# #11cc55 %02d:%02d:%02d#", hour, minute, second);
+      lv_label_set_text_fmt(labelTime, "#ebdfbc [TIME]# #a8b863 %02d:%02d:%02d#", hour, minute, second);
     }
 
     currentDate = std::chrono::time_point_cast<std::chrono::days>(currentDateTime.Get());
@@ -116,7 +116,7 @@ void WatchFaceTerminal::Refresh() {
       uint16_t year = dateTimeController.Year();
       Controllers::DateTime::Months month = dateTimeController.Month();
       uint8_t day = dateTimeController.Day();
-      lv_label_set_text_fmt(labelDate, "#ffffff [DATE]# #007fff %04d-%02d-%02d#", year, month, day);
+      lv_label_set_text_fmt(labelDate, "#ebdfbc [DATE]# #83b5bd %04d-%02d-%02d#", year, month, day);
     }
   }
 
@@ -127,7 +127,7 @@ void WatchFaceTerminal::Refresh() {
                                       LV_LABEL_PART_MAIN,
                                       LV_STATE_DEFAULT,
                                       BatteryIcon::ColorFromPercentage(batteryPercentRemaining.Get()));
-    lv_label_set_text_fmt(batteryValue, "#ffffff [BATT]# %d%%", batteryPercentRemaining.Get());
+    lv_label_set_text_fmt(batteryValue, "#ebdfbc [BATT]# %d%%", batteryPercentRemaining.Get());
     if (batteryController.IsCharging()) {
       lv_label_ins_text(batteryValue, LV_LABEL_POS_LAST, " Charging");
     }
@@ -135,7 +135,7 @@ void WatchFaceTerminal::Refresh() {
 
   stepCount = motionController.NbSteps();
   if (stepCount.IsUpdated()) {
-    lv_label_set_text_fmt(stepValue, "#ffffff [STEP]# %lu steps", stepCount.Get());
+    lv_label_set_text_fmt(stepValue, "#ebdfbc [STEP]# %lu steps", stepCount.Get());
   }
 
   heartbeat = heartRateController.HeartRate();
@@ -143,9 +143,9 @@ void WatchFaceTerminal::Refresh() {
   if (heartbeat.IsUpdated() || heartbeatRunning.IsUpdated()) {
     if (heartbeatRunning.Get()) {
       lv_obj_set_style_local_text_color(heartbeatValue, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::deepOrange);
-      lv_label_set_text_fmt(heartbeatValue, "#ffffff [L_HR]# %d bpm", heartbeat.Get());
+      lv_label_set_text_fmt(heartbeatValue, "#ebdfbc [L_HR]# %d bpm", heartbeat.Get());
     } else {
-      lv_label_set_text_static(heartbeatValue, "#ffffff [L_HR]# ---");
+      lv_label_set_text_static(heartbeatValue, "#ebdfbc [L_HR]# ---");
       lv_obj_set_style_local_text_color(heartbeatValue, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::gray);
     }
   }
@@ -161,12 +161,12 @@ void WatchFaceTerminal::Refresh() {
         tempUnit = 'F';
       }
       lv_label_set_text_fmt(weather,
-                            "#ffffff [WTHR]# #ffdd00 %d°%c %s#",
+                            "#ebdfbc [WTHR]# #ffd464 %d°%c %s#",
                             temp,
                             tempUnit,
                             Symbols::GetSimpleCondition(optCurrentWeather->iconId));
     } else {
-      lv_label_set_text(weather, "#ffffff [WTHR]# #ffdd00 ---");
+      lv_label_set_text(weather, "#ebdfbc [WTHR]# #ffd464 ---");
     }
   }
 
@@ -174,14 +174,14 @@ void WatchFaceTerminal::Refresh() {
   bleRadioEnabled = bleController.IsRadioEnabled();
   if (bleState.IsUpdated() || bleRadioEnabled.IsUpdated()) {
     if (!bleRadioEnabled.Get()) {
-      lv_label_set_text_static(connectState, "#ffffff [STAT]# Disabled");
+      lv_label_set_text_static(connectState, "#ebdfbc [STAT]# Disabled");
       lv_obj_set_style_local_text_color(connectState, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::gray);
     } else {
       if (bleState.Get()) {
-        lv_label_set_text_static(connectState, "#ffffff [STAT]# Connected");
+        lv_label_set_text_static(connectState, "#ebdfbc [STAT]# Connected");
         lv_obj_set_style_local_text_color(connectState, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::blue);
       } else {
-        lv_label_set_text_static(connectState, "#ffffff [STAT]# Disconnected");
+        lv_label_set_text_static(connectState, "#ebdfbc [STAT]# Disconnected");
         lv_obj_set_style_local_text_color(connectState, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::gray);
       }
     }

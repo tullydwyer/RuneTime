@@ -78,7 +78,7 @@ namespace Pinetime {
     template <>
     struct WatchFaceTraits<WatchFace::Terminal> {
       static constexpr WatchFace watchFace = WatchFace::Terminal;
-      static constexpr const char* name = "Terminal";
+      static constexpr const char* name = "Quest journal";
 
       static Screens::Screen* Create(AppControllers& controllers) {
         return new Screens::WatchFaceTerminal(controllers.dateTimeController,

@@ -1,3 +1,4 @@
+#include "displayapp/InfiniTimeTheme.h"
 #include "displayapp/screens/Twos.h"
 #include <cstdio>
 #include <cstdlib>
@@ -13,11 +14,11 @@ Twos::Twos() {
   };
 
   static constexpr colorPair colors[nColors] = {
-    {LV_COLOR_MAKE(0xcd, 0xc0, 0xb4), LV_COLOR_BLACK},
-    {LV_COLOR_MAKE(0xef, 0xdf, 0xc6), LV_COLOR_BLACK},
-    {LV_COLOR_MAKE(0xef, 0x92, 0x63), LV_COLOR_WHITE},
-    {LV_COLOR_MAKE(0xf7, 0x61, 0x42), LV_COLOR_WHITE},
-    {LV_COLOR_MAKE(0x00, 0x7d, 0xc5), LV_COLOR_WHITE},
+    {LV_COLOR_MAKE(0xcd, 0xc0, 0xb4), Colors::bgDark},
+    {LV_COLOR_MAKE(0xef, 0xdf, 0xc6), Colors::bgDark},
+    {LV_COLOR_MAKE(0xef, 0x92, 0x63), Colors::parchment},
+    {LV_COLOR_MAKE(0xf7, 0x61, 0x42), Colors::parchment},
+    {LV_COLOR_MAKE(0x00, 0x7d, 0xc5), Colors::parchment},
   };
 
   gridDisplay = lv_table_create(lv_scr_act(), nullptr);
@@ -60,7 +61,7 @@ Twos::Twos() {
   lv_label_set_align(scoreText, LV_ALIGN_IN_LEFT_MID);
   lv_obj_align(scoreText, nullptr, LV_ALIGN_IN_TOP_LEFT, 0, 0);
   lv_label_set_recolor(scoreText, true);
-  lv_label_set_text_fmt(scoreText, "Score #FFFF00 %i#", score);
+  lv_label_set_text_fmt(scoreText, "Score #ffd464 %i#", score);
 }
 
 Twos::~Twos() {
@@ -103,7 +104,7 @@ bool Twos::tryMerge(int newRow, int newCol, int oldRow, int oldCol) {
       if (!grid[newRow][newCol].merged) {
         grid[newRow][newCol].value *= 2;
         score += grid[newRow][newCol].value;
-        lv_label_set_text_fmt(scoreText, "Score #FFFF00 %i#", score);
+        lv_label_set_text_fmt(scoreText, "Score #ffd464 %i#", score);
         grid[oldRow][oldCol].value = 0;
         grid[newRow][newCol].merged = true;
         return true;

@@ -481,6 +481,7 @@ list(APPEND SOURCE_FILES
 
         displayapp/LittleVgl.cpp
         displayapp/InfiniTimeTheme.cpp
+        displayapp/icons/runetime/runetime.c
 
         systemtask/SystemTask.cpp
         systemtask/SystemMonitor.cpp
@@ -1144,4 +1145,3 @@ endif()
 if(BUILD_RESOURCES)
   add_subdirectory(resources)
 endif()
-

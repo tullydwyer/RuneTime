@@ -64,6 +64,7 @@ namespace Pinetime {
         lv_obj_t* notificationIcon;
         lv_obj_t* weatherIcon;
         lv_obj_t* temperature;
+        lv_obj_t* questLabel;
 
         Controllers::DateTime& dateTimeController;
         Controllers::NotificationManager& notificationManager;
@@ -80,7 +81,7 @@ namespace Pinetime {
     template <>
     struct WatchFaceTraits<WatchFace::Digital> {
       static constexpr WatchFace watchFace = WatchFace::Digital;
-      static constexpr const char* name = "Digital";
+      static constexpr const char* name = "RuneTime";
 
       static Screens::Screen* Create(AppControllers& controllers) {
         return new Screens::WatchFaceDigital(controllers.dateTimeController,

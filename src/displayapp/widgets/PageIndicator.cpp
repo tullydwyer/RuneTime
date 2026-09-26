@@ -19,7 +19,7 @@ void PageIndicator::Create() {
 
   pageIndicator = lv_line_create(lv_scr_act(), nullptr);
   lv_obj_set_style_local_line_width(pageIndicator, LV_LINE_PART_MAIN, LV_STATE_DEFAULT, 3);
-  lv_obj_set_style_local_line_color(pageIndicator, LV_LINE_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
+  lv_obj_set_style_local_line_color(pageIndicator, LV_LINE_PART_MAIN, LV_STATE_DEFAULT, Colors::gold);
   SetPageIndicatorPosition(nCurrentScreen);
 }
 
